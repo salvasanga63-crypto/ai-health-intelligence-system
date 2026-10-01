@@ -1,0 +1,58 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+backend/venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+backend/instance/
+
+# Node / Next.js
+node_modules/
+.next/
+frontend-next/.next/
+dist/
+build/
+
+# Uploads / generated
+uploads/
+backend/uploads/
+
+# IDE / local tools
+.idea/
+.vscode/
+.claude/
+.qodo/
+.ipynb_checkpoints/
+
+# OS / temp
+.DS_Store
+Thumbs.db
+*.log
+.~lock.*
+# Local shell / machine config
+.bash_profile
+.bashrc
+.gitconfig
+.mcp.json
+.profile
+.ripgreprc
+.zprofile
+.zshrc
+
+# Source archives
+*.zip
+
+# Python cache anywhere
+**/__pycache__/
+*.pyc

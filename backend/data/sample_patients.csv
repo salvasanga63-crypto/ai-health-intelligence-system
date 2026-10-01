@@ -1,0 +1,4 @@
+id,name,age,symptoms,history,vitals
+1,Jane Doe,42,"fever,cough,shortness of breath","hypertension","heart_rate:110;oxygen_saturation:92"
+2,Maria Johnson,30,"abdominal pain,nausea","gestational diabetes","heart_rate:88;blood_pressure:130/85"
+3,Robert Kim,67,"chest pain,dizziness","diabetes,smoker","heart_rate:102;oxygen_saturation:94"

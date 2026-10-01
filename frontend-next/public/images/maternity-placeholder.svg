@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="#f8fafc" />
+  <rect x="0" y="0" width="620" height="600" fill="#f1f5f9" />
+  <g transform="translate(80,80)">
+    <rect width="440" height="440" rx="24" fill="url(#g)" opacity="0.12" />
+    <text x="20" y="60" font-size="36" fill="#0f172a" font-family="Arial, Helvetica, sans-serif">Maternal Care</text>
+    <text x="20" y="110" font-size="20" fill="#475569" font-family="Arial, Helvetica, sans-serif">Comprehensive prenatal guidance and cluster-based services.</text>
+  </g>
+</svg>

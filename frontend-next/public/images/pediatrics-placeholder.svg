@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#f8fafc" />
+  <rect x="0" y="0" width="620" height="600" fill="#fff7ed" />
+  <g transform="translate(80,80)">
+    <text x="20" y="60" font-size="36" fill="#0f172a" font-family="Arial, Helvetica, sans-serif">Pediatrics</text>
+    <text x="20" y="110" font-size="20" fill="#475569" font-family="Arial, Helvetica, sans-serif">Child wellness resources and vaccination updates.</text>
+  </g>
+</svg>

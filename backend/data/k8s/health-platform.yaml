@@ -1,0 +1,183 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: health-platform
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-credentials
+  namespace: health-platform
+type: Opaque
+stringData:
+  POSTGRES_USER: health_user
+  POSTGRES_PASSWORD: health_pass
+  POSTGRES_DB: health_db
+  JWT_SECRET_KEY: super-secret-key
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  namespace: health-platform
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: health-platform
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: postgres-credentials
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: health-platform
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: health-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: health-backend
+  template:
+    metadata:
+      labels:
+        app: health-backend
+    spec:
+      containers:
+        - name: backend
+          image: your-dockerhub-username/health-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+            - name: FLASK_ENV
+              value: production
+            - name: DATABASE_URL
+              value: postgresql+psycopg2://health_user:health_pass@postgres-service/health_db
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: JWT_SECRET_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: health-platform
+spec:
+  type: ClusterIP
+  selector:
+    app: health-backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-next
+  namespace: health-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-next
+  template:
+    metadata:
+      labels:
+        app: frontend-next
+    spec:
+      containers:
+        - name: frontend-next
+          image: your-dockerhub-username/health-frontend-next:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: NEXT_PUBLIC_API_BASE
+              value: http://backend-service:5000/api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-next-service
+  namespace: health-platform
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend-next
+  ports:
+    - port: 80
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: health-platform-ingress
+  namespace: health-platform
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-next-service
+                port:
+                  number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 5000

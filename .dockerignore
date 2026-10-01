@@ -1,0 +1,14 @@
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+*.swp
+backend/venv
+frontend/node_modules
+frontend/.next
+frontend-next/node_modules
+frontend-next/.next
+npm-debug.log
+.DS_Store
