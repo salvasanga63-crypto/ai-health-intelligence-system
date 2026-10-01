@@ -10,7 +10,7 @@ Or:
 
 Environment Variables:
   - DATABASE_URL: PostgreSQL/SQLite connection string (default: sqlite:///app.db)
-  - JWT_SECRET_KEY: Secret key for JWT tokens (default: super-secret-key)
+  - JWT_SECRET_KEY: Secret key for JWT tokens (default: required)
   - FLASK_ENV: Set to 'production' for production mode
 
 Frontend CORS:
@@ -36,7 +36,7 @@ Running the Server:
 
 Environment Variables:
   DATABASE_URL: PostgreSQL/SQLite URL (default: sqlite:///app.db)
-  JWT_SECRET_KEY: Secret for JWT tokens (default: super-secret-key)
+  JWT_SECRET_KEY: Secret for JWT tokens (default: required)
   FLASK_ENV: Set to 'production' for production mode
 
 API Endpoints:
@@ -78,7 +78,12 @@ def create_app():
         'sqlite:///app.db'
     )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'super-secret-key')
+    jwt_secret = os.environ.get("JWT_SECRET_KEY")
+
+if not jwt_secret:
+    raise RuntimeError("JWT_SECRET_KEY environment variable is required")
+
+app.config["JWT_SECRET_KEY"] = jwt_secret
     CORS(app)
     db.init_app(app)
     Migrate(app, db)
